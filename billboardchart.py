@@ -8,7 +8,7 @@ import os
 
 def get_billboard_data():
     chart = billboard.ChartData('hot-100')
-
+#pulling data from billboard top 100
     song_title_list = []
     artist_name_list =[]
     weeks_on_chart_list =[]
@@ -25,7 +25,7 @@ def get_billboard_data():
         song_rank_list.append(song_rank)
         song_title_list.append(song_title)
         weeks_on_chart_list.append(weeks_on_chart)
-   
+   #creating categories for songs based on num of weeks on the chart 
     songCategory = []
     for song in weeks_on_chart_list:
         if song < 5:
