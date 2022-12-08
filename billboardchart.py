@@ -42,7 +42,7 @@ def get_billboard_data():
    
     return song_title_list, artist_name_list, song_rank_list,weeks_on_chart_list, songCategory
     
-        
+
 def setUpDatabase(db_name):
     path = os.path.dirname(os.path.abspath(__file__))
     conn = sqlite3.connect(path+'/'+db_name)
