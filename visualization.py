@@ -171,8 +171,8 @@ def main():
     viz_billboard_pie(data)
     spot_data = get_song_pop(conn)
     spotify_viz_chart(spot_data)
-    write_calculations(data)
-    write_calculations(spot_data)
+    # write_calculations(data)
+    # write_calculations(spot_data)
 
     
     
