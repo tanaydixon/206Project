@@ -84,6 +84,7 @@ def viz_billboard_pie(data):
     plt.pie(numOfSongs, labels = weeks, autopct= '%1.1f%%')
 
     plt.title('Average Number of Weeks On  Spent on Billboard Top 100')
+    plt.show()
 
 
 #make dictionary for spotify visual
