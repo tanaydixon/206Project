@@ -199,7 +199,7 @@ def spotify_viz_chart(spot_data):
         numbOfSongs.append(i[1])
     xposition = np.arange(len(pop_on_chart))
     fig = plt.figure(figsize =(10, 7))
-    plt.bar(xposition, numbOfSongs, color = 'purple' )
+    plt.bar(xposition, numbOfSongs, color = 'navy' )
     plt.xticks(xposition, pop_on_chart)
     plt.xlabel('Rating of Popularity on Spotify Top 100')
     plt.ylabel('Number of Songs')
@@ -221,10 +221,10 @@ def main():
     cur2 = conn.cursor()
    
     data = get_weeks_popularity(conn)
-    # viz_billboard(data)
-    # viz_billboard_pie(data)
+    viz_billboard(data)
+    viz_billboard_pie(data)
     spot_data = get_song_pop(conn)
-    # spotify_viz_chart(spot_data)
+    spotify_viz_chart(spot_data)
     usa_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "usa" AND song_rank = 1').fetchone()
   
     uk_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "uk" AND song_rank = 1').fetchone()
