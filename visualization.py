@@ -47,22 +47,22 @@ def viz(data):
     for weeks in weeksOnChart:
         weeks = weeks[0]
         if weeks == 1:
-            weeks ='less than 5 weeks'
+            weeks ='5 '
         elif weeks == 2:
-            weeks = 'less than 10 weeks' 
+            weeks = '10 ' 
         elif weeks == 3:
-            weeks = 'less than 15 weeks' 
+            weeks = '15 ' 
         elif weeks == 4:
-            weeks = 'less than 20 weeks'
+            weeks = '20'
         else:
-            weeks = 'more than 20 weeks'
+            weeks = 'more than 20'
         newList.append(weeks)
     xposition = np.arange(len(newList))
     plt.bar(xposition, numOfSongs)
     plt.xticks(xposition, newList)
     plt.xlabel('The Numbers of Weeks on The Top 100')
     plt.ylabel('Number of Songs')
-    plt.title('Average Amount of Time Spent on Billboard Top 100')
+    plt.title('Number of Songs vs Time on The Chart')
     plt.show()
 
 
