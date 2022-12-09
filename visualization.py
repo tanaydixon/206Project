@@ -57,6 +57,7 @@ def viz(data):
         else:
             weeks = 'more than 20'
         newList.append(weeks)
+    fig = plt.figure(figsize =(20, 15))
     xposition = np.arange(len(newList))
     plt.bar(xposition, numOfSongs)
     plt.xticks(xposition, newList)
@@ -79,7 +80,7 @@ def viz_billboard_pie(data):
     
     weeks = ['less than 5 weeks','less than 10 weeks', 'less than 15 weeks', 'less than 20 weeks', 'more than 20 weeks' ]
    
-    fig = plt.figure(figsize =(10, 7))
+    fig = plt.figure(figsize =(20, 15))
 
     plt.pie(numOfSongs, labels = weeks, autopct= '%1.1f%%')
 
@@ -144,6 +145,7 @@ def spotify_viz_chart(spot_data):
     for i in dataSorted:
         pop_on_chart.append(i[0])
         numbOfSongs.append(i[1])
+    fig = plt.figure(figsize =(20, 15))
     xposition = np.arange(len(pop_on_chart))
     plt.bar(xposition, numbOfSongs, color = 'purple' )
     plt.xticks(xposition, pop_on_chart)
