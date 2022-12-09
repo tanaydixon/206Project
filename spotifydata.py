@@ -24,7 +24,6 @@ def user_info(spotify):
 def create_playlist(spotify):
     #user_id = spotify.user_info().get('id', "None")
     top_50_usa_data = spotify.playlist_tracks('37i9dQZF1DXcBWIGoYBM5M')
-   
     top_50_uk_data = spotify.playlist_tracks('153yGNYdzvyCZxzDnIzNUx')
     song_tuple_list = []
 
@@ -70,14 +69,13 @@ def createDatabase(cur, conn, spotify):
     cur.execute("SELECT COUNT(*) FROM Spotify")
     add_25 = cur.fetchone()[0]
     for item in create_playlist(spotify)[add_25:add_25+25]:
-        cur.execute("INSERT INTO Spotify (song_id, song_title, song_artist, song_rank, song_date, song_pop, country_code) VALUES (?, ?, ?, ?, ?, ?, ?)", (item[0], item[1], item[2], item[3], item[4], item[5], item[5]))
+        cur.execute("INSERT INTO Spotify (song_id, song_title, song_artist, song_rank, song_date, song_pop, country_code) VALUES (?, ?, ?, ?, ?, ?, ?)", (item[0], item[1], item[2], item[3], item[4], item[5], item[6]))
         add_25 += 1
     conn.commit()
 
 
 def main():
     spotify = getSpotifyObject("7tj4dlofb2yvuijru40p3grnp", 'playlist-modify-public')
-    
     cur, conn = setUpDatabase('Billboard.db')
     createDatabase(cur, conn, spotify)
     conn.close()

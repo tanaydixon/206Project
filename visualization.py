@@ -1,10 +1,18 @@
 import json
 import requests
 import os
+import spotipy
 import sqlite3
-import matplotlib
+# import spotifydata as sp
 import matplotlib.pyplot as plt
 import numpy as np
+from spotipy.oauth2 import SpotifyClientCredentials
+import pandas as pd
+
+SPOTIPY_CLIENT_ID = '46282d85ebe64cfa9fc2d7de035bce0e'
+SPOTIPY_CLIENT_SECRET= '355ae8f3f3b14ee19a7a470d22413bdc'
+auth_manager = SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET)
+sp = spotipy.Spotify(auth_manager=auth_manager)
 
 
 def set_connection(db_file):
@@ -17,6 +25,48 @@ def set_connection(db_file):
     return conn
 
 
+
+    
+def get_features(track_id):
+    track_features_x = sp.audio_features(track_id)
+    dfx = pd.DataFrame(track_features_x, index=[0])
+    dfx_features = dfx.loc[: ,['acousticness', 'danceability', 'energy', 'instrumentalness', 'liveness', 'speechiness', 'valence']]
+    return dfx_features
+
+def feature_plot2(features1,features2):
+    #Import Libraries for Feature plot
+    
+    
+    labels= list(features1)[:]
+    stats= features1.mean().tolist()
+    stats2 = features2.mean().tolist()
+
+    angles=np.linspace(0, 2*np.pi, len(labels), endpoint=False)
+
+    # close the plot
+    stats=np.concatenate((stats,[stats[0]]))
+    stats2 =np.concatenate((stats2,[stats2[0]])) 
+    angles=np.concatenate((angles,[angles[0]]))
+
+    #Size of the figure
+    fig=plt.figure(figsize = (18,18))
+
+    ax = fig.add_subplot(221, polar=True)
+    ax.plot(angles, stats, 'o-', linewidth=2, label = "USA_Top_1", color= 'gray')
+    ax.fill(angles, stats, alpha=0.25, facecolor='blue')
+    ax.set_thetagrids(angles[0:7] * 180/np.pi, labels , fontsize = 13)
+
+    ax.set_rlabel_position(250)
+    plt.yticks([0.2 , 0.4 , 0.6 , 0.8  ], ["0.2",'0.4', "0.6", "0.8"], color="grey", size=12)
+    plt.ylim(0,1)
+
+    ax.plot(angles, stats2, 'o-', linewidth=2, label = "UK_Top_1 2", color = 'm')
+    ax.fill(angles, stats2, alpha=0.25, facecolor='m' )
+    ax.set_title('Mean Values of the audio features')
+    ax.grid(True)
+
+    plt.legend(loc='best', bbox_to_anchor=(0.1, 0.1))
+    plt.show()
 # get the number of weeks that songs typically spend on the charts for billboard
 def get_weeks_popularity(conn):
     cur = conn.cursor()
@@ -35,7 +85,7 @@ def get_weeks_popularity(conn):
 
 
 # make visualization for billboard top 100 
-def viz(data):
+def viz_billboard(data):
     weeksOnChart = []
     numOfSongs = []
     dataSorted = sorted(data.items(),key = lambda x:x[0])
@@ -47,24 +97,26 @@ def viz(data):
     for weeks in weeksOnChart:
         weeks = weeks[0]
         if weeks == 1:
-            weeks ='5 '
+            weeks ='less than 5 weeks'
         elif weeks == 2:
-            weeks = '10 ' 
+            weeks = 'less than 10 weeks' 
         elif weeks == 3:
-            weeks = '15 ' 
+            weeks = 'less than 15 weeks' 
         elif weeks == 4:
-            weeks = '20'
+            weeks = 'less than 20 weeks'
         else:
-            weeks = 'more than 20'
+            weeks = 'more than 20 weeks'
         newList.append(weeks)
     fig = plt.figure(figsize =(10, 7))
     xposition = np.arange(len(newList))
-    plt.bar(xposition, numOfSongs)
+    plt.bar(xposition, numOfSongs, color = 'purple')
     plt.xticks(xposition, newList)
     plt.xlabel('The Numbers of Weeks on The Top 100')
     plt.ylabel('Number of Songs')
-    plt.title('Number of Songs vs Time on The Chart')
+    plt.title('Average Amount of Time Spent on Billboard Top 100')
     plt.show()
+
+
 
 def viz_billboard_pie(data):
     weeksOnChart = []
@@ -145,8 +197,8 @@ def spotify_viz_chart(spot_data):
     for i in dataSorted:
         pop_on_chart.append(i[0])
         numbOfSongs.append(i[1])
-    fig = plt.figure(figsize =(10, 7))
     xposition = np.arange(len(pop_on_chart))
+    fig = plt.figure(figsize =(10, 7))
     plt.bar(xposition, numbOfSongs, color = 'purple' )
     plt.xticks(xposition, pop_on_chart)
     plt.xlabel('Rating of Popularity on Spotify Top 100')
@@ -166,14 +218,18 @@ def write_calculations(data):
 #runs all of the code 
 def main():
     conn = set_connection('BillBoard.db')
+    cur2 = conn.cursor()
+   
     data = get_weeks_popularity(conn)
-    viz(data)
-    viz_billboard_pie(data)
+    # viz_billboard(data)
+    # viz_billboard_pie(data)
     spot_data = get_song_pop(conn)
-    spotify_viz_chart(spot_data)
-    # write_calculations(data)
-    # write_calculations(spot_data)
+    # spotify_viz_chart(spot_data)
+    usa_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "usa" AND song_rank = 1').fetchone()
+  
+    uk_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "uk" AND song_rank = 1').fetchone()
+    usa_1_features = get_features(usa_top_1_id)
+    uk_1_features = get_features(uk_top_1_id)
+    feature_plot2(usa_1_features,uk_1_features)
 
-    
-    
 main()

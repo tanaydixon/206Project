@@ -56,7 +56,7 @@ def feature_plot2(features1,features2):
 
 def main():
     song1_features = get_features("6dBUzqjtbnIa1TwYbyw5CM")
-    song2_features = get_features("1JafzQB44cUzhSWWyCNi6F")
+    song2_features = get_features("7AQim7LbvFVZJE3O8TYgf2")
     feature_plot2(song1_features,song2_features)
     
 

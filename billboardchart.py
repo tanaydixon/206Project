@@ -1,10 +1,11 @@
-import requests
+
 import billboard
 import sqlite3
 import matplotlib.pyplot as plt
 import matplotlib
 import numpy as np
 import os
+
 
 def get_billboard_data():
     chart = billboard.ChartData('hot-100')
@@ -42,7 +43,7 @@ def get_billboard_data():
    
     return song_title_list, artist_name_list, song_rank_list,weeks_on_chart_list, songCategory
     
-
+        
 def setUpDatabase(db_name):
     path = os.path.dirname(os.path.abspath(__file__))
     conn = sqlite3.connect(path+'/'+db_name)
@@ -56,6 +57,7 @@ def createDatabase(cur, conn, startIndex):
         if startIndex == 100:
             pass
         else:
+
             cur.execute("INSERT INTO BillBoardSongs (song, artist, rank, weeks_id) VALUES (?, ?, ?, ?)", (song[item], artist[item], ranking[item], songCategory[item]))
     conn.commit()
     
