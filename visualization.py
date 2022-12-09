@@ -65,6 +65,26 @@ def viz(data):
     plt.title('Number of Songs vs Time on The Chart')
     plt.show()
 
+def viz_billboard_pie(data):
+    weeksOnChart = []
+    numOfSongs = []
+    
+    dataSorted = sorted(data.items(),key = lambda x:x[0])
+   
+    for i in dataSorted:
+        weeksOnChart.append(i[0])
+        numOfSongs.append(i[1])
+   
+   
+    
+    weeks = ['less than 5 weeks','less than 10 weeks', 'less than 15 weeks', 'less than 20 weeks', 'more than 20 weeks' ]
+   
+    fig = plt.figure(figsize =(10, 7))
+
+    plt.pie(numOfSongs, labels = weeks, autopct= '%1.1f%%')
+
+    plt.title('Average Number of Weeks On  Spent on Billboard Top 100')
+
 
 #make dictionary for spotify visual
 def get_song_pop(conn):
@@ -145,6 +165,7 @@ def main():
     conn = set_connection('BillBoard.db')
     data = get_weeks_popularity(conn)
     viz(data)
+    viz_billboard_pie(data)
     spot_data = get_song_pop(conn)
     spotify_viz_chart(spot_data)
     write_calculations(data)
