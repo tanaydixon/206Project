@@ -1,0 +1,1 @@
+{"50% & lower popularity": 7, "above 90% popularity": 19, "89-80% popularity": 22, "79-70% popularity": 2}

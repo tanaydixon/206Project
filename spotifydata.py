@@ -51,13 +51,6 @@ def create_playlist(spotify):
     return song_tuple_list
 
 
-def join_tables(cur, conn):
-    cur.execute("SELECT BillBoardSongs.song, Spotify.artist FROM BillBoardSongs RIGHT JOIN Spotify ON BillBoardSongs.artist = Spotify.artist")
-    results = cur.fetchall()
-    print(results)
-    conn.commit()
-    # print(results)
-    return results
 
 
 def setUpDatabase(db_name):
@@ -67,11 +60,11 @@ def setUpDatabase(db_name):
     return cur, conn
 
 def createDatabase(cur, conn, spotify):
-    cur.execute("CREATE TABLE IF NOT EXISTS Spotify (song_id TEXT, title TEXT, artist TEXT, rank INTEGER, song_date TEXT, song_pop INTEGER, country_code TEXT)") 
+    cur.execute("CREATE TABLE IF NOT EXISTS Spotify (song_id TEXT PRIMARY KEY, song TEXT, artist TEXT , song_rank INTEGER, song_date TEXT, song_pop INTEGER, country_code TEXT)") 
     cur.execute("SELECT COUNT(*) FROM Spotify")
     add_25 = cur.fetchone()[0]
     for item in create_playlist(spotify)[add_25:add_25+25]:
-        cur.execute("INSERT INTO Spotify (song_id, title, artist, rank, song_date, song_pop, country_code) VALUES (?, ?, ?, ?, ?, ?, ?)", (item[0], item[1], item[2], item[3], item[4], item[5], item[6]))
+        cur.execute("INSERT INTO Spotify (song_id, song, artist, song_rank, song_date, song_pop, country_code) VALUES (?, ?, ?, ?, ?, ?, ?)", (item[0], item[1], item[2], item[3], item[4], item[5], item[6]))
         add_25 += 1
     conn.commit()
 
@@ -80,9 +73,7 @@ def main():
     spotify = getSpotifyObject("7tj4dlofb2yvuijru40p3grnp", 'playlist-modify-public')
     cur, conn = setUpDatabase('Billboard.db')
     createDatabase(cur, conn, spotify)
-    join_tables(cur, conn)
     conn.close()
-   
 
 if __name__ == "__main__":
     main()

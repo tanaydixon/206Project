@@ -52,7 +52,7 @@ def feature_plot2(features1,features2):
     fig=plt.figure(figsize = (18,18))
 
     ax = fig.add_subplot(221, polar=True)
-    ax.plot(angles, stats, 'o-', linewidth=2, label = "USA_Top_1", color= 'gray')
+    ax.plot(angles, stats, 'o-', linewidth=2, label = "Song_1", color= 'gray')
     ax.fill(angles, stats, alpha=0.25, facecolor='blue')
     ax.set_thetagrids(angles[0:7] * 180/np.pi, labels , fontsize = 13)
 
@@ -60,7 +60,7 @@ def feature_plot2(features1,features2):
     plt.yticks([0.2 , 0.4 , 0.6 , 0.8  ], ["0.2",'0.4', "0.6", "0.8"], color="grey", size=12)
     plt.ylim(0,1)
 
-    ax.plot(angles, stats2, 'o-', linewidth=2, label = "UK_Top_1 2", color = 'm')
+    ax.plot(angles, stats2, 'o-', linewidth=2, label = "Song_1", color = 'm')
     ax.fill(angles, stats2, alpha=0.25, facecolor='m' )
     ax.set_title('Mean Values of the audio features')
     ax.grid(True)
@@ -185,6 +185,7 @@ def get_song_pop(conn):
                 song_pop_dict[pop] += 1
             else:
                 song_pop_dict[pop] = 1
+    
     return song_pop_dict
 
 
@@ -199,23 +200,48 @@ def spotify_viz_chart(spot_data):
         numbOfSongs.append(i[1])
     xposition = np.arange(len(pop_on_chart))
     fig = plt.figure(figsize =(10, 7))
-    plt.bar(xposition, numbOfSongs, color = 'navy' )
+    plt.bar(xposition, numbOfSongs, color = 'purple' )
     plt.xticks(xposition, pop_on_chart)
     plt.xlabel('Rating of Popularity on Spotify Top 100')
     plt.ylabel('Number of Songs')
     plt.title('Average Amount of Popularity on Spotify Top 100')
     plt.show()
-
+def join_tables(cur, conn):
+    cur.execute("SELECT song_id FROM Spotify INNER JOIN BillBoardSongs ON Spotify.song = BillBoardSongs.song LIMIT 2")
+    results = cur.fetchall()
+    conn.commit()
+    
+    return results
+    
 def write_calculations(data):
     f = open('billboard.txt', 'w' , encoding = 'utf-8')
     f.write(json.dumps(data))
 
 
-def write_calculations(data):
-    f = open('spotify_cal.txt', 'w' , encoding = 'utf-8')
-    f.write(json.dumps(data))
+# def write_spotify(data):
+#     f = open('spotify.txt', 'w' , encoding = 'utf-8')
+#     f.write(json.dumps(data))
 
 #runs all of the code 
+
+
+def top_songs_featurs():
+    conn = set_connection('BillBoard.db')
+    cur = conn.cursor()
+    spotify_id = join_tables(cur, conn)
+    
+    song_1_id= spotify_id[0]
+    song_2_id = spotify_id[1]
+
+    feature_1 = get_features(song_1_id)
+    featur_2 = get_features(song_2_id)
+
+   
+
+    compar_vis = feature_plot2(feature_1, featur_2)
+    return compar_vis
+    
+
 def main():
     conn = set_connection('BillBoard.db')
     cur2 = conn.cursor()
@@ -224,13 +250,29 @@ def main():
     viz_billboard(data)
     viz_billboard_pie(data)
     spot_data = get_song_pop(conn)
-    print(spot_data)
     spotify_viz_chart(spot_data)
-    usa_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "usa" AND song_rank = 1').fetchone()
+
+
+    # spotify_id = join_tables(cur2, conn)
+    # song_1 = spotify_id[0]
+    # print(type(song_1))
+    # song_2 = spotify_id[1]
+    # feature_plot2(song_1, song_2)
+
+
+    # usa_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "usa" AND song_rank = 1').fetchone()
+    
   
-    uk_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "uk" AND song_rank = 1').fetchone()
-    usa_1_features = get_features(usa_top_1_id)
-    uk_1_features = get_features(uk_top_1_id)
-    feature_plot2(usa_1_features,uk_1_features)
+    # uk_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "uk" AND song_rank = 1').fetchone()
+    
+    # usa_1_features = get_features(usa_top_1_id)
+    # uk_1_features = get_features(uk_top_1_id)
+    # feature_plot2(usa_1_features, uk_1_features)
+
+    write_calculations(spot_data)
+    # top_songs_featurs()
+    # write_spotify(spotify_id)
+    top_songs_featurs()
+
 
 main()
