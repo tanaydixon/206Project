@@ -224,6 +224,7 @@ def main():
     viz_billboard(data)
     viz_billboard_pie(data)
     spot_data = get_song_pop(conn)
+    print(spot_data)
     spotify_viz_chart(spot_data)
     usa_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "usa" AND song_rank = 1').fetchone()
   
