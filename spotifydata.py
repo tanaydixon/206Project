@@ -55,7 +55,11 @@ def join_tables(cur, conn):
     cur.execute("SELECT Hot100.song, ArtistIds.artist FROM Hot100 LEFT JOIN ArtistIds ON Hot100.artist_id = ArtistIds.artist_id")
     results = cur.fetchall()
     conn.commit()
+<<<<<<< HEAD
     print(results)
+=======
+    print( results)
+>>>>>>> a6c1ea4f832188b582e142193d83969f05a6bebb
     return results
 
 
