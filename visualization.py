@@ -1,5 +1,5 @@
 import json
-import requests
+
 import os
 import spotipy
 import sqlite3
@@ -52,7 +52,41 @@ def feature_plot2(features1,features2):
     fig=plt.figure(figsize = (18,18))
 
     ax = fig.add_subplot(221, polar=True)
-    ax.plot(angles, stats, 'o-', linewidth=2, label = "Song_1", color= 'gray')
+    ax.plot(angles, stats, 'o-', linewidth=2, label = "USA_Song_1", color= 'blue')
+    ax.fill(angles, stats, alpha=0.25, facecolor='blue')
+    ax.set_thetagrids(angles[0:7] * 180/np.pi, labels , fontsize = 13)
+
+    ax.set_rlabel_position(250)
+    plt.yticks([0.2 , 0.4 , 0.6 , 0.8  ], ["0.2",'0.4', "0.6", "0.8"], color="gray", size=12)
+    plt.ylim(0,1)
+
+    ax.plot(angles, stats2, 'o-', linewidth=2, label = "UK_Top_1", color = 'm')
+    ax.fill(angles, stats2, alpha=0.25, facecolor='m' )
+    ax.set_title("Comparison of the audio features of Uk Top-1 spotify song and USA top-1 song")
+    ax.grid(True)
+
+    plt.legend(loc='best', bbox_to_anchor=(0.1, 0.1))
+    plt.show() 
+def feature_plot_billboard_Top_2(features1,features2):
+    #Import Libraries for Feature plot
+    
+    
+    labels= list(features1)[:]
+    stats= features1.mean().tolist()
+    stats2 = features2.mean().tolist()
+
+    angles=np.linspace(0, 2*np.pi, len(labels), endpoint=False)
+
+    # close the plot
+    stats=np.concatenate((stats,[stats[0]]))
+    stats2 =np.concatenate((stats2,[stats2[0]])) 
+    angles=np.concatenate((angles,[angles[0]]))
+
+    #Size of the figure
+    fig=plt.figure(figsize = (18,18))
+
+    ax = fig.add_subplot(221, polar=True)
+    ax.plot(angles, stats, 'o-', linewidth=2, label = "Song_1", color= 'blue')
     ax.fill(angles, stats, alpha=0.25, facecolor='blue')
     ax.set_thetagrids(angles[0:7] * 180/np.pi, labels , fontsize = 13)
 
@@ -60,9 +94,9 @@ def feature_plot2(features1,features2):
     plt.yticks([0.2 , 0.4 , 0.6 , 0.8  ], ["0.2",'0.4', "0.6", "0.8"], color="grey", size=12)
     plt.ylim(0,1)
 
-    ax.plot(angles, stats2, 'o-', linewidth=2, label = "Song_1", color = 'm')
+    ax.plot(angles, stats2, 'o-', linewidth=2, label = "Song_2", color = 'm')
     ax.fill(angles, stats2, alpha=0.25, facecolor='m' )
-    ax.set_title('Mean Values of the audio features')
+    ax.set_title("Audio Features of Top Two Billboard Songs")
     ax.grid(True)
 
     plt.legend(loc='best', bbox_to_anchor=(0.1, 0.1))
@@ -81,6 +115,7 @@ def get_weeks_popularity(conn):
             week_dict[num] += 1
         else:
             week_dict[num] = 1
+   
     return week_dict
 
 
@@ -109,7 +144,7 @@ def viz_billboard(data):
         newList.append(weeks)
     fig = plt.figure(figsize =(10, 7))
     xposition = np.arange(len(newList))
-    plt.bar(xposition, numOfSongs, color = 'purple')
+    plt.bar(xposition, numOfSongs, color = 'teal')
     plt.xticks(xposition, newList)
     plt.xlabel('The Numbers of Weeks on The Top 100')
     plt.ylabel('Number of Songs')
@@ -218,11 +253,8 @@ def write_calculations(data):
     f.write(json.dumps(data))
 
 
-# def write_spotify(data):
-#     f = open('spotify.txt', 'w' , encoding = 'utf-8')
-#     f.write(json.dumps(data))
 
-#runs all of the code 
+
 
 
 def top_songs_featurs():
@@ -252,27 +284,20 @@ def main():
     spot_data = get_song_pop(conn)
     spotify_viz_chart(spot_data)
 
-
-    # spotify_id = join_tables(cur2, conn)
-    # song_1 = spotify_id[0]
-    # print(type(song_1))
-    # song_2 = spotify_id[1]
-    # feature_plot2(song_1, song_2)
-
-
-    # usa_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "usa" AND song_rank = 1').fetchone()
+   
+    usa_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "usa" AND song_rank = 1').fetchone()
     
   
-    # uk_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "uk" AND song_rank = 1').fetchone()
+    uk_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "uk" AND song_rank = 1').fetchone()
     
-    # usa_1_features = get_features(usa_top_1_id)
-    # uk_1_features = get_features(uk_top_1_id)
-    # feature_plot2(usa_1_features, uk_1_features)
+    usa_1_features = get_features(usa_top_1_id)
+    uk_1_features = get_features(uk_top_1_id)
+    feature_plot_billboard_Top_2(usa_1_features, uk_1_features)
 
     write_calculations(spot_data)
-    # top_songs_featurs()
-    # write_spotify(spotify_id)
+    
     top_songs_featurs()
-
+    get_weeks_popularity(conn)
+    
 
 main()
