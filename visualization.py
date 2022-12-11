@@ -24,6 +24,9 @@ def set_connection(db_file):
         print('not connected')
     return conn
 
+
+
+    
 def get_features(track_id):
     track_features_x = sp.audio_features(track_id)
     dfx = pd.DataFrame(track_features_x, index=[0])
@@ -46,7 +49,7 @@ def feature_plot2(features1,features2):
     angles=np.concatenate((angles,[angles[0]]))
 
     #Size of the figure
-    fig=plt.figure(figsize = (18,18))
+    fig = plt.figure(figsize =(15, 15))
 
     ax = fig.add_subplot(221, polar=True)
     ax.plot(angles, stats, 'o-', linewidth=2, label = "USA_Song_1", color= 'blue')
@@ -80,7 +83,7 @@ def feature_plot_billboard_Top_2(features1,features2):
     angles=np.concatenate((angles,[angles[0]]))
 
     #Size of the figure
-    fig=plt.figure(figsize = (18,18))
+    fig = plt.figure(figsize =(10, 7))
 
     ax = fig.add_subplot(221, polar=True)
     ax.plot(angles, stats, 'o-', linewidth=2, label = "Song_1", color= 'blue')
@@ -124,7 +127,7 @@ def viz_billboard(data):
     for i in dataSorted:
         weeksOnChart.append(i[0])
         numOfSongs.append(i[1])
-    #print(weeksOnChart)
+   
     newList = []
     for weeks in weeksOnChart:
         weeks = weeks[0]
@@ -139,6 +142,7 @@ def viz_billboard(data):
         else:
             weeks = 'more than 20 weeks'
         newList.append(weeks)
+   
     fig = plt.figure(figsize =(10, 7))
     xposition = np.arange(len(newList))
     plt.bar(xposition, numOfSongs, color = 'teal')
@@ -148,7 +152,26 @@ def viz_billboard(data):
     plt.title('Average Amount of Time Spent on Billboard Top 100')
     plt.show()
 
+def calculation_billboard(data):
+    weeksOnChart = []
+    numOfSongs = []
+    
+    dataSorted = sorted(data.items(),key = lambda x:x[0])
+   
+    for i in dataSorted:
+        weeksOnChart.append(i[0])
+        numOfSongs.append(i[1])
+   
+    
+    weeks = ['The number of songs on Chart for less than 5 weeks','The number of songs on Chart for less than 10 weeks', 'The number of songs on Chart for less than 15 weeks', 'The number of songs on Chart for less than 20 weeks', 'The number of songs on Chart for more than 20 weeks' ]
+    billboard_cal_dic ={}
+    for key in weeks:
+        for value in numOfSongs:
+            billboard_cal_dic[key] = str(value) +" songs"
+            numOfSongs.remove(value)
+            break
 
+    return billboard_cal_dic
 
 def viz_billboard_pie(data):
     weeksOnChart = []
@@ -159,7 +182,8 @@ def viz_billboard_pie(data):
     for i in dataSorted:
         weeksOnChart.append(i[0])
         numOfSongs.append(i[1])
-   
+    # print(weeksOnChart)
+    # print(numOfSongs) # gives number of songs for respect week category
    
     
     weeks = ['less than 5 weeks','less than 10 weeks', 'less than 15 weeks', 'less than 20 weeks', 'more than 20 weeks' ]
@@ -181,43 +205,44 @@ def get_song_pop(conn):
         song_pop_list.append(pop[0])
     song_pop_dict = {}
     for pop in song_pop_list:
-        if pop > 90:
-            pop = 'above 90% popularity'
-            if pop in song_pop_dict:
-                song_pop_dict[pop] += 1
-            else:
-                song_pop_dict[pop] = 1
-        elif pop < 90 and pop >= 80:
-            pop = '89-80% popularity'
-            if pop in song_pop_dict:
-                song_pop_dict[pop] += 1
-            else:
-                song_pop_dict[pop] = 1
-        elif pop < 80 and pop >= 70:
-            pop = '79-70% popularity'
-            if pop in song_pop_dict:
-                song_pop_dict[pop] += 1
-            else:
-                song_pop_dict[pop] = 1
-        elif pop < 70 and pop >= 60:
-            pop = '69-60% popularity'
-            if pop in song_pop_dict:
-                song_pop_dict[pop] += 1
-            else:
-                song_pop_dict[pop] = 1
-        elif pop < 60 and pop >=50:
-            pop = '59-50% popularity'
-            if pop in song_pop_dict:
-                song_pop_dict[pop] += 1
-            else:
-                song_pop_dict[pop] = 1
-        else:
+        if pop < 50 :
             pop = '50% & lower popularity'
             if pop in song_pop_dict:
                 song_pop_dict[pop] += 1
             else:
                 song_pop_dict[pop] = 1
-    
+        elif pop > 50 and pop <= 60:
+            pop = '50-59% popularity'
+            if pop in song_pop_dict:
+                song_pop_dict[pop] += 1
+            else:
+                song_pop_dict[pop] = 1
+        elif pop > 60 and pop <= 70:
+            pop = '60-69% popularity'
+            if pop in song_pop_dict:
+                song_pop_dict[pop] += 1
+            else:
+                song_pop_dict[pop] = 1
+        elif pop > 70 and pop <= 80:
+            pop = '70-79% popularity'
+            if pop in song_pop_dict:
+                song_pop_dict[pop] += 1
+            else:
+                song_pop_dict[pop] = 1
+        elif pop > 80 and pop <=90:
+            pop = '80-89% popularity'
+            if pop in song_pop_dict:
+                song_pop_dict[pop] += 1
+            else:
+                song_pop_dict[pop] = 1
+        else:
+            pop = 'above 90% popularity'
+            if pop in song_pop_dict:
+                song_pop_dict[pop] += 1
+            else:
+                song_pop_dict[pop] = 1
+        
+    # print(song_pop_dict)
     return song_pop_dict
 
 
@@ -231,7 +256,7 @@ def spotify_viz_chart(spot_data):
         pop_on_chart.append(i[0])
         numbOfSongs.append(i[1])
     xposition = np.arange(len(pop_on_chart))
-    fig = plt.figure(figsize =(10, 7))
+    fig = plt.figure(figsize =(15, 7))
     plt.bar(xposition, numbOfSongs, color = 'purple' )
     plt.xticks(xposition, pop_on_chart)
     plt.xlabel('Rating of Popularity on Spotify Top 100')
@@ -245,11 +270,13 @@ def join_tables(cur, conn):
     
     return results
     
-def write_calculations(data):
-    f = open('billboard.txt', 'w' , encoding = 'utf-8')
+def spotify_calculations(data):
+    f = open('spotify.txt', 'w' , encoding = 'utf-8')
     f.write(json.dumps(data))
 
-
+def billboard_calculations(data):
+    f = open('billboard.txt', 'w' , encoding = 'utf-8')
+    f.write(json.dumps(data))
 
 
 
@@ -276,12 +303,13 @@ def main():
     cur2 = conn.cursor()
    
     data = get_weeks_popularity(conn)
+   
     viz_billboard(data)
     viz_billboard_pie(data)
     spot_data = get_song_pop(conn)
     spotify_viz_chart(spot_data)
 
-   
+  
     usa_top_1_id  = cur2.execute('SELECT song_id  FROM Spotify WHERE country_code = "usa" AND song_rank = 1').fetchone()
     
   
@@ -291,8 +319,9 @@ def main():
     uk_1_features = get_features(uk_top_1_id)
     feature_plot_billboard_Top_2(usa_1_features, uk_1_features)
 
-    write_calculations(spot_data)
-    
+    spotify_calculations(spot_data)
+    data_billbaord = calculation_billboard(data)
+    billboard_calculations(data_billbaord)
     top_songs_featurs()
     get_weeks_popularity(conn)
     

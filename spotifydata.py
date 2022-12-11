@@ -23,8 +23,10 @@ def user_info(spotify):
 
 def create_playlist(spotify):
     #user_id = spotify.user_info().get('id', "None")
-    top_50_usa_data = spotify.playlist_tracks('37i9dQZF1DXcBWIGoYBM5M')
-    top_50_uk_data = spotify.playlist_tracks('153yGNYdzvyCZxzDnIzNUx')
+    # https://open.spotify.com/playlist/37i9dQZEVXbLRQDuF5jeBp?si=74e2b6b879904990
+    top_50_usa_data = spotify.playlist_tracks('37i9dQZEVXbLRQDuF5jeBp')
+    # https://open.spotify.com/playlist/1QM1qz09ZzsAPiXphF1l4S?si=05c33069ff4f4b94
+    top_50_uk_data = spotify.playlist_tracks('1QM1qz09ZzsAPiXphF1l4S')
     song_tuple_list = []
 
     rank_counter = 1 
@@ -60,7 +62,7 @@ def setUpDatabase(db_name):
     return cur, conn
 
 def createDatabase(cur, conn, spotify):
-    cur.execute("CREATE TABLE IF NOT EXISTS Spotify (song_id TEXT PRIMARY KEY, song TEXT, artist TEXT , song_rank INTEGER, song_date TEXT, song_pop INTEGER, country_code TEXT)") 
+    cur.execute("CREATE TABLE IF NOT EXISTS Spotify (song_id TEXT, song TEXT, artist TEXT , song_rank INTEGER PRIMARY KEY, song_date TEXT, song_pop INTEGER, country_code TEXT)") 
     cur.execute("SELECT COUNT(*) FROM Spotify")
     add_25 = cur.fetchone()[0]
     for item in create_playlist(spotify)[add_25:add_25+25]:
