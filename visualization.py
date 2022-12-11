@@ -24,9 +24,6 @@ def set_connection(db_file):
         print('not connected')
     return conn
 
-
-
-    
 def get_features(track_id):
     track_features_x = sp.audio_features(track_id)
     dfx = pd.DataFrame(track_features_x, index=[0])
