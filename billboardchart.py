@@ -1,9 +1,6 @@
 
 import billboard
 import sqlite3
-import matplotlib.pyplot as plt
-import matplotlib
-import numpy as np
 import os
 
 
@@ -50,8 +47,16 @@ def setUpDatabase(db_name):
     cur = conn.cursor()
     return cur, conn
 
-def createDatabase(cur, conn, startIndex):
+def createDatabase(cur, conn):
+    cur.execute("CREATE TABLE IF NOT EXISTS BillBoardSongs (song TEXT, artist TEXT, rank INTEGER UNIQUE, weeks_id INTEGER)") 
     song, artist, ranking, weeksOnTop100, songCategory = get_billboard_data()
+    cur.execute("CREATE TABLE IF NOT EXISTS WeeksID (songCategory INTEGER, weeks TEXT)") 
+    cur.execute('SELECT* FROM BillBoardSongs JOIN WeeksID ON BillBoardSongs.weeks_id = WeeksID.songCategory')
+    cur.execute('SELECT max (rank) from BillBoardSongs')
+    startIndex = cur.fetchone()[0]
+    if startIndex == None:
+        startIndex = 0
+    
     #print(startIndex)
     for item in range(startIndex, startIndex + 25):
         if startIndex == 100:
@@ -78,14 +83,14 @@ def createDatabase2(cur, conn):
 def main():
     get_billboard_data()
     cur, conn = setUpDatabase('BillBoard.db')
-    cur.execute("CREATE TABLE IF NOT EXISTS BillBoardSongs (song TEXT, artist TEXT, rank INTEGER UNIQUE, weeks_id INTEGER)") 
-    cur.execute("CREATE TABLE IF NOT EXISTS WeeksID (songCategory INTEGER, weeks TEXT)") 
-    cur.execute('SELECT* FROM BillBoardSongs JOIN WeeksID ON BillBoardSongs.weeks_id = WeeksID.songCategory')
-    cur.execute('SELECT max (rank) from BillBoardSongs')
-    startIndex = cur.fetchone()[0]
-    if startIndex == None:
-        startIndex = 0
-    createDatabase(cur, conn, startIndex)
+    # cur.execute("CREATE TABLE IF NOT EXISTS BillBoardSongs (song TEXT, artist TEXT, rank INTEGER UNIQUE, weeks_id INTEGER)") 
+    # cur.execute("CREATE TABLE IF NOT EXISTS WeeksID (songCategory INTEGER, weeks TEXT)") 
+    # cur.execute('SELECT* FROM BillBoardSongs JOIN WeeksID ON BillBoardSongs.weeks_id = WeeksID.songCategory')
+    # cur.execute('SELECT max (rank) from BillBoardSongs')
+    # startIndex = cur.fetchone()[0]
+    # if startIndex == None:
+    #     startIndex = 0
+    createDatabase(cur, conn)
     createDatabase2(cur, conn)
 
 if __name__ == "__main__":

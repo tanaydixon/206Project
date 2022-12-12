@@ -1,16 +1,9 @@
 import spotipy
 import spotipy.util as util
-#from spotipy.oauth2 import SpotifyClientCredentials
-
 import os
 import matplotlib.pyplot as plt
-
 import sqlite3
 
-
-
-# username = '316qlwtjr4yhyleissfe6vis6iqi'
-# # scope = 'user-read-private user-read-playback-state user-modify-playback-state'
 
 def getSpotifyObject(username, scope):
     token = util.prompt_for_user_token(username, scope, client_id = '46282d85ebe64cfa9fc2d7de035bce0e', 
@@ -18,17 +11,14 @@ def getSpotifyObject(username, scope):
                                                                 redirect_uri='http://rahat.com/')
     spotify = spotipy.Spotify(auth=token)
     return spotify
-def user_info(spotify):
-    return spotify.current_user()
+
+# def user_info(spotify):
+#     return spotify.current_user()
 
 def create_playlist(spotify):
-    #user_id = spotify.user_info().get('id', "None")
-    # https://open.spotify.com/playlist/37i9dQZEVXbLRQDuF5jeBp?si=74e2b6b879904990
     top_50_usa_data = spotify.playlist_tracks('37i9dQZEVXbLRQDuF5jeBp')
-    # https://open.spotify.com/playlist/1QM1qz09ZzsAPiXphF1l4S?si=05c33069ff4f4b94
     top_50_uk_data = spotify.playlist_tracks('1QM1qz09ZzsAPiXphF1l4S')
     song_tuple_list = []
-
     rank_counter = 1 
     for song in top_50_usa_data['items']:
         song_id = song['track']['id']
@@ -62,7 +52,7 @@ def setUpDatabase(db_name):
     return cur, conn
 
 def createDatabase(cur, conn, spotify):
-    cur.execute("CREATE TABLE IF NOT EXISTS Spotify (song_id TEXT, song TEXT, artist TEXT , song_rank INTEGER PRIMARY KEY, song_date TEXT, song_pop INTEGER, country_code TEXT)") 
+    cur.execute("CREATE TABLE IF NOT EXISTS Spotify (song_id TEXT, song TEXT, artist TEXT , song_rank INTEGER , song_date TEXT, song_pop INTEGER, country_code TEXT)") 
     cur.execute("SELECT COUNT(*) FROM Spotify")
     add_25 = cur.fetchone()[0]
     for item in create_playlist(spotify)[add_25:add_25+25]:

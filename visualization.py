@@ -13,8 +13,6 @@ SPOTIPY_CLIENT_ID = '46282d85ebe64cfa9fc2d7de035bce0e'
 SPOTIPY_CLIENT_SECRET= '355ae8f3f3b14ee19a7a470d22413bdc'
 auth_manager = SpotifyClientCredentials(client_id=SPOTIPY_CLIENT_ID, client_secret=SPOTIPY_CLIENT_SECRET)
 sp = spotipy.Spotify(auth_manager=auth_manager)
-
-
 def set_connection(db_file):
     try:
         path = os.path.dirname(os.path.abspath(__file__))
