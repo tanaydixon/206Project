@@ -147,7 +147,7 @@ def viz_billboard(data):
     plt.xticks(xposition, newList)
     plt.xlabel('The Numbers of Weeks on The Top 100')
     plt.ylabel('Number of Songs')
-    plt.title('Average Amount of Time Spent on Billboard Top 100')
+    plt.title('Amount of Time Spent on Billboard Top 100')
     plt.show()
 
 def calculation_billboard(data):
@@ -190,7 +190,7 @@ def viz_billboard_pie(data):
 
     plt.pie(numOfSongs, labels = weeks, autopct= '%1.1f%%')
 
-    plt.title('Average Number of Weeks On  Spent on Billboard Top 100')
+    plt.title('Number of Weeks Songs Spent on Billboard Top 100')
     plt.show()
 
 
@@ -259,7 +259,7 @@ def spotify_viz_chart(spot_data):
     plt.xticks(xposition, pop_on_chart)
     plt.xlabel('Rating of Popularity on Spotify Top 100')
     plt.ylabel('Number of Songs')
-    plt.title('Average Amount of Popularity on Spotify Top 100')
+    plt.title('Amount of Popularity on Spotify Top 100')
     plt.show()
 def join_tables(cur, conn):
     cur.execute("SELECT song_id FROM Spotify INNER JOIN BillBoardSongs ON Spotify.song = BillBoardSongs.song LIMIT 2")
