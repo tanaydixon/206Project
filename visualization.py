@@ -194,7 +194,7 @@ def viz_billboard_pie(data):
     plt.show()
 
 
-#make dictionary for spotify visual
+#make dictionary for spotify visualization
 def get_song_pop(conn):
     cur = conn.cursor()
     popularity = cur.execute('SELECT song_pop FROM Spotify').fetchall()
