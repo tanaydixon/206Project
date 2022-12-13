@@ -46,14 +46,14 @@ def setUpDatabase(db_name):
     conn = sqlite3.connect(path+'/'+db_name)
     cur = conn.cursor()
     return cur, conn
-def create_artist_table(cur, conn, spotify):
-    cur.execute("CREATE TABLE IF NOT EXISTS Artist ( artist TEXT, artist_id INTEGER UNIQUE)") 
-    cur.execute("SELECT COUNT(*) FROM Artist")
-    add_25 = cur.fetchone()[0]
-    for item in create_playlist(spotify)[add_25:add_25+25]:
-        cur.execute("INSERT INTO Artist ( artist, artist_id) VALUES (?, ?)", (item[2], item+1))
-        add_25 += 1
-    conn.commit()
+# def create_artist_table(cur, conn, spotify):
+#     cur.execute("CREATE TABLE IF NOT EXISTS Artist ( artist TEXT, artist_id INTEGER UNIQUE)") 
+#     cur.execute("SELECT COUNT(*) FROM Artist")
+#     add_25 = cur.fetchone()[0]
+#     for item in create_playlist(spotify)[add_25:add_25+25]:
+#         cur.execute("INSERT INTO Artist ( artist, artist_id) VALUES (?, ?)", (item[2], item+1))
+#         add_25 += 1
+#     conn.commit()
 
 #creating data base by pulling 25 songs at a time - need to be ran 4 times 
 def create_spotify_table(cur, conn, spotify):
