@@ -47,8 +47,8 @@ def setUpDatabase(db_name):
     cur = conn.cursor()
     return cur, conn
 
-def createDatabase(cur, conn):
-    cur.execute("CREATE TABLE IF NOT EXISTS BillBoardSongs (song TEXT, artist TEXT, rank INTEGER UNIQUE, weeks_id INTEGER)") 
+def create_Billbaord_table(cur, conn):
+    cur.execute("CREATE TABLE IF NOT EXISTS BillBoardSongs (song TEXT, artist TEXT , rank INTEGER UNIQUE, weeks_id INTEGER)") 
     song, artist, ranking, weeksOnTop100, songCategory = get_billboard_data()
     cur.execute("CREATE TABLE IF NOT EXISTS WeeksID (songCategory INTEGER, weeks TEXT)") 
     cur.execute('SELECT* FROM BillBoardSongs JOIN WeeksID ON BillBoardSongs.weeks_id = WeeksID.songCategory')
@@ -66,7 +66,7 @@ def createDatabase(cur, conn):
             cur.execute("INSERT INTO BillBoardSongs (song, artist, rank, weeks_id) VALUES (?, ?, ?, ?)", (song[item], artist[item], ranking[item], songCategory[item]))
     conn.commit()
     
-def createDatabase2(cur, conn):
+def create_Weeks_id_Table(cur, conn):
     stringWeeks = ['less than 5 weeks', 'less than 10 weeks', 'less than 15 weeks', 'less than 20 weeks', 'more than 20 weeks']
     #song, artist, ranking, weeksOnTop100, songCategory = getBillBoardLink()
     cur.execute('SELECT max (songCategory) from WeeksID')
@@ -83,15 +83,8 @@ def createDatabase2(cur, conn):
 def main():
     get_billboard_data()
     cur, conn = setUpDatabase('BillBoard.db')
-    # cur.execute("CREATE TABLE IF NOT EXISTS BillBoardSongs (song TEXT, artist TEXT, rank INTEGER UNIQUE, weeks_id INTEGER)") 
-    # cur.execute("CREATE TABLE IF NOT EXISTS WeeksID (songCategory INTEGER, weeks TEXT)") 
-    # cur.execute('SELECT* FROM BillBoardSongs JOIN WeeksID ON BillBoardSongs.weeks_id = WeeksID.songCategory')
-    # cur.execute('SELECT max (rank) from BillBoardSongs')
-    # startIndex = cur.fetchone()[0]
-    # if startIndex == None:
-    #     startIndex = 0
-    createDatabase(cur, conn)
-    createDatabase2(cur, conn)
+    create_Billbaord_table(cur, conn)
+    create_Weeks_id_Table(cur, conn)
 
 if __name__ == "__main__":
     main()

@@ -12,9 +12,6 @@ def getSpotifyObject(username, scope):
     spotify = spotipy.Spotify(auth=token)
     return spotify
 
-# def user_info(spotify):
-#     return spotify.current_user()
-
 #creating spotify playlists
 def create_playlist(spotify):
     top_50_usa_data = spotify.playlist_tracks('37i9dQZEVXbLRQDuF5jeBp')
@@ -44,18 +41,23 @@ def create_playlist(spotify):
         rank_counter += 1 
     return song_tuple_list
 
-
-
-
 def setUpDatabase(db_name):
     path = os.path.dirname(os.path.abspath(__file__))
     conn = sqlite3.connect(path+'/'+db_name)
     cur = conn.cursor()
     return cur, conn
+def create_artist_table(cur, conn, spotify):
+    cur.execute("CREATE TABLE IF NOT EXISTS Artist ( artist TEXT, artist_id INTEGER UNIQUE)") 
+    cur.execute("SELECT COUNT(*) FROM Artist")
+    add_25 = cur.fetchone()[0]
+    for item in create_playlist(spotify)[add_25:add_25+25]:
+        cur.execute("INSERT INTO Artist ( artist, artist_id) VALUES (?, ?)", (item[2], item[3]))
+        add_25 += 1
+    conn.commit()
 
 #creating data base by pulling 25 songs at a time - need to be ran 4 times 
-def createDatabase(cur, conn, spotify):
-    cur.execute("CREATE TABLE IF NOT EXISTS Spotify (song_id TEXT, song TEXT, artist TEXT , song_rank INTEGER , song_date TEXT, song_pop INTEGER, country_code TEXT)") 
+def create_spotify_table(cur, conn, spotify):
+    cur.execute("CREATE TABLE IF NOT EXISTS Spotify (song_id TEXT, song TEXT, artist TEXT, song_rank INTEGER , song_date TEXT, song_pop INTEGER, country_code TEXT)") 
     cur.execute("SELECT COUNT(*) FROM Spotify")
     add_25 = cur.fetchone()[0]
     for item in create_playlist(spotify)[add_25:add_25+25]:
@@ -67,7 +69,7 @@ def createDatabase(cur, conn, spotify):
 def main():
     spotify = getSpotifyObject("7tj4dlofb2yvuijru40p3grnp", 'playlist-modify-public')
     cur, conn = setUpDatabase('Billboard.db')
-    createDatabase(cur, conn, spotify)
+    create_spotify_table(cur, conn, spotify)
     conn.close()
 
 if __name__ == "__main__":
