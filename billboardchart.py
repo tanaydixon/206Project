@@ -56,19 +56,16 @@ def create_Billbaord_table(cur, conn):
     startIndex = cur.fetchone()[0]
     if startIndex == None:
         startIndex = 0
-    
-    #print(startIndex)
     for item in range(startIndex, startIndex + 25):
         if startIndex == 100:
             pass
         else:
-
             cur.execute("INSERT INTO BillBoardSongs (song, artist, rank, weeks_id) VALUES (?, ?, ?, ?)", (song[item], artist[item], ranking[item], songCategory[item]))
     conn.commit()
-    
+
+
 def create_Weeks_id_Table(cur, conn):
     stringWeeks = ['less than 5 weeks', 'less than 10 weeks', 'less than 15 weeks', 'less than 20 weeks', 'more than 20 weeks']
-    #song, artist, ranking, weeksOnTop100, songCategory = getBillBoardLink()
     cur.execute('SELECT max (songCategory) from WeeksID')
     maxNum = cur.fetchone()[0]
     if maxNum == 5:
@@ -78,7 +75,7 @@ def create_Weeks_id_Table(cur, conn):
             cur.execute("INSERT INTO WeeksID (songCategory, weeks) VALUES (?, ?)", (item+1, stringWeeks[item]))
     conn.commit()
 
-    #pass
+ 
 
 def main():
     get_billboard_data()

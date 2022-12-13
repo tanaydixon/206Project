@@ -51,7 +51,7 @@ def create_artist_table(cur, conn, spotify):
     cur.execute("SELECT COUNT(*) FROM Artist")
     add_25 = cur.fetchone()[0]
     for item in create_playlist(spotify)[add_25:add_25+25]:
-        cur.execute("INSERT INTO Artist ( artist, artist_id) VALUES (?, ?)", (item[2], item[3]))
+        cur.execute("INSERT INTO Artist ( artist, artist_id) VALUES (?, ?)", (item[2], item+1))
         add_25 += 1
     conn.commit()
 
